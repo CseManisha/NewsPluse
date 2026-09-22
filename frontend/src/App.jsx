@@ -4,17 +4,18 @@ import "./App.css";
 function App() {
   const [news, setNews] = useState([]);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/news")
-      .then((response) => response.json())
-      .then((data) => {
-        setNews(data.articles);
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-      });
-  }, []);
 
+useEffect(() => {
+  fetch("http://localhost:5000/api/news")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("API DATA:", data);
+      setNews(data.articles || []);
+    })
+    .catch((error) => {
+      console.log("Error:", error);
+    });
+}, []);
   return (
     <div className="container">
 
