@@ -6,7 +6,7 @@ function App() {
 
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/news")
+  fetch(`${import.meta.env.VITE_API_URL}/api/news`)
     .then((response) => response.json())
     .then((data) => {
       console.log("API DATA:", data);
