@@ -22,7 +22,7 @@ app.get("/api/news", async (req, res) => {
     const query= search || "technology";
 
     const response = await fetch(
-  `https://newsapi.org/v2/everything?q=technology&language=en&sortBy=publishedAt&apiKey=${process.env.NEWS_API_KEY}`
+  `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&apiKey=${process.env.NEWS_API_KEY}`
 );
     const data = await response.json();
 
