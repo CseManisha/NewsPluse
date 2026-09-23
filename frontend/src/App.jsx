@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const [news, setNews] = useState([]);
+  const [search, setSearch] = useState ("");
 
 
 useEffect(() => {
@@ -16,12 +17,46 @@ useEffect(() => {
       console.log("Error:", error);
     });
 }, []);
+
+{/* search barr code */}
+const handleSearch = () => {
+  if (!search.trim()) {
+    return;
+  }
+
+  fetch(
+    `${import.meta.env.VITE_API_URL}/api/news?search=${encodeURIComponent(search)}`
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("SEARCH DATA:", data);
+      setNews(data.articles || []);
+    })
+    .catch((error) => {
+      console.log("Search Error:", error);
+    });
+};
+
+
   return (
     <div className="container">
 
       <div className="header">
         <h1>News Pulse</h1>
         <p>Latest technology news in one place</p>
+         
+             {/* Search Bar */}
+          <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search news..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+          <button onClick={handleSearch} >Search</button>
+        </div>
+
       </div>
 
       <div className="news-container">

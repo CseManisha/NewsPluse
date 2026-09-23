@@ -11,10 +11,16 @@ app.get("/", (req, res) => {
   res.send("News Pulse Backend Running");
 });
 
-// News API key Integration
+// News API  Integration
 
 app.get("/api/news", async (req, res) => {
   try {
+
+    const {search}= req.query;
+    console.log("search term",search);
+    
+    const query= search || "technology";
+
     const response = await fetch(
   `https://newsapi.org/v2/everything?q=technology&language=en&sortBy=publishedAt&apiKey=${process.env.NEWS_API_KEY}`
 );
@@ -29,6 +35,7 @@ app.get("/api/news", async (req, res) => {
   }
 });
 
+// server port
 const PORT = 5000;
 
 app.listen(PORT, () => {
