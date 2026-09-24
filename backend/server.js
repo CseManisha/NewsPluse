@@ -28,7 +28,12 @@ let ingestionStatus = {
 };
 
 app.use(cors({
-  origin:"https://news-pluse-virid.vercel.app",
+  origin:[
+    "https://news-pluse-virid.vercel.app",
+    "http://localhost:5173"
+  ],
+  methods:["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders:["Content-Type","Authorization"]
 }));
 app.use(express.json());
 
