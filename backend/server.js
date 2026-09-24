@@ -27,7 +27,9 @@ let ingestionStatus = {
   message: "Idle"
 };
 
-app.use(cors());
+app.use(cors({
+  origin:"https://news-pluse-virid.vercel.app",
+}));
 app.use(express.json());
 
 connectDB();
