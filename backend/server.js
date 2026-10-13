@@ -66,7 +66,8 @@ const importArticlesAndClusters = async () => {
         source: article.source,
         url: article.url,
         publishedAt: article.publishedAt,
-        clusterId: article.clusterId
+        clusterId: article.clusterId,
+        imageUrl: article.imageUrl || ""
       },
       {
         new: true,

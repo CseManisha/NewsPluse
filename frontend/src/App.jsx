@@ -7,7 +7,7 @@ function App() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedCluster, setSelectedCluster] = useState(null);
-  const [refreshing,setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Fetch articles
   const fetchNews = () => {
@@ -79,65 +79,65 @@ function App() {
     }
   };
 
-  {/*refresh handle */}
+  {/*refresh handle */ }
 
   const handleRefresh = async () => {
-  try {
-    setRefreshing(true);
+    try {
+      setRefreshing(true);
 
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/refresh`,
-      {
-        method: "POST",
-      }
-    );
-
-    const data = await response.json();
-
-    console.log("Refresh:", data);
-
-    if (!response.ok) {
-      throw new Error(data.message || "Refresh failed");
-    }
-
-    // Check refresh status
-    const checkStatus = setInterval(async () => {
-      try {
-        const statusResponse = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/refresh/status`
-        );
-
-        const status = await statusResponse.json();
-
-        console.log("Refresh status:", status);
-
-        if (!status.running) {
-          clearInterval(checkStatus);
-
-          setRefreshing(false);
-
-          if (status.success) {
-            // Get newly imported data
-            fetchNews();
-            fetchClusters();
-
-            console.log("Refresh completed successfully");
-          } else {
-            console.log("Refresh failed:", status.message);
-          }
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/refresh`,
+        {
+          method: "POST",
         }
-      } catch (error) {
-        clearInterval(checkStatus);
-        setRefreshing(false);
-        console.log("Status error:", error);
-      }
-    }, 1000);
+      );
 
-  } catch (error) {
-    setRefreshing(false);
-    console.log("Refresh error:", error);
-  }
-};
+      const data = await response.json();
+
+      console.log("Refresh:", data);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Refresh failed");
+      }
+
+      // Check refresh status
+      const checkStatus = setInterval(async () => {
+        try {
+          const statusResponse = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/refresh/status`
+          );
+
+          const status = await statusResponse.json();
+
+          console.log("Refresh status:", status);
+
+          if (!status.running) {
+            clearInterval(checkStatus);
+
+            setRefreshing(false);
+
+            if (status.success) {
+              // Get newly imported data
+              fetchNews();
+              fetchClusters();
+
+              console.log("Refresh completed successfully");
+            } else {
+              console.log("Refresh failed:", status.message);
+            }
+          }
+        } catch (error) {
+          clearInterval(checkStatus);
+          setRefreshing(false);
+          console.log("Status error:", error);
+        }
+      }, 1000);
+
+    } catch (error) {
+      setRefreshing(false);
+      console.log("Refresh error:", error);
+    }
+  };
 
   return (
     <div className="container">
@@ -171,9 +171,9 @@ function App() {
           </button>
 
           <button onClick={handleRefresh}
-          disabled={refreshing}
+            disabled={refreshing}
           >
-          { refreshing ? "Refreshing..":"Refresh"}
+            {refreshing ? "Refreshing.." : "Refresh"}
           </button>
 
         </div>
@@ -297,8 +297,19 @@ function App() {
               key={article._id}
             >
 
+
               <div className="news-image">
-                📰
+                {article.imageUrl ? (
+                  <img
+                    src={article.imageUrl}
+                    alt={article.title}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <span>📰</span>
+                )}
               </div>
 
               <div className="news-content">

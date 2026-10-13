@@ -152,7 +152,10 @@ feeds = [
         "url": "https://www.theguardian.com/world/rss"
     }
 ]
+# article
 
+
+# Articles
 articles = []
 
 def clean_html(text):
@@ -160,23 +163,75 @@ def clean_html(text):
     return soup.get_text(" ", strip=True)
 
 for feed_info in feeds:
-
     feed = feedparser.parse(feed_info["url"])
-
     print(feed_info["name"], "articles:", len(feed.entries))
 
     for item in feed.entries[:5]:
+        image_url = ""
 
+        # 1. Try RSS media thumbnail
+        if item.get("media_thumbnail"):
+            image_url = item["media_thumbnail"][0].get("url", "")
+
+        # 2. Try RSS media content
+        if not image_url and item.get("media_content"):
+            for media in item["media_content"]:
+                image_url = media.get("url", "")
+                if image_url:
+                    break
+
+        # 3. Try enclosure links
+        if not image_url:
+            for enclosure in item.get("enclosures", []):
+                image_url = (
+                    enclosure.get("href", "")
+                    or enclosure.get("url", "")
+                )
+                if image_url:
+                    break
+
+        # 4. Try image tags in RSS summary
+        if not image_url:
+            soup = BeautifulSoup(
+                item.get("summary", ""), "html.parser"
+            )
+            img = soup.find("img")
+            if img:
+                image_url = img.get("src", "")
+
+        # 5. Try image links in RSS entry
+        if not image_url:
+            for link in item.get("links", []):
+                media_type = link.get("type", "")
+                href = link.get("href", "")
+                if media_type.startswith("image/") and href:
+                    image_url = href
+                    break
+
+        print("Article:", item.get("title", "")[:50])
+        print("Image URL:", image_url)
+
+        # Create the article
         article = {
             "title": item.get("title", ""),
             "summary": clean_html(item.get("summary", "")),
             "content": extract_content(item.get("link", "")),
             "source": feed_info["name"],
             "url": item.get("link", ""),
-            "publishedAt": format_date(item.get("published", ""))
+            "publishedAt": format_date(item.get("published", "")),
+            "imageUrl": image_url
         }
 
         articles.append(article)
+
+print("Total articles:", len(articles))
+
+if articles:
+    print("First article:", articles[0]["title"])
+    print("Image URL:", articles[0].get("imageUrl", ""))
+else:
+    print("No articles were collected.")
+
 
 
 print("\nTotal articles:", len(articles))
